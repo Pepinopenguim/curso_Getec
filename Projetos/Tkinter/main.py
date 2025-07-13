@@ -1,10 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
+from calculations import Calculations
 
 class Model():
     def __init__(self, controller):
         self.controller = controller
         self.polygon = []
+
+    def calculate_area(self):
+        calc = Calculations(self.polygon)
+        return calc.Area_of_Polygon()
 
 
 class View(tk.Tk):
@@ -28,9 +33,8 @@ class View(tk.Tk):
     def setup_styler(self):
         self.styler = ttk.Style(self)
         self.styler.configure("TFrame", background="#f0f0f0")
-        self.styler.configure("TLabel", background="#f0f0f0", font=("Helvetica", 16))
-        self.styler.configure("TEntry", background="#f0f0f0")
-        self.styler.configure("TButton", background="#f0f0f0")
+        self.styler.configure("TLabel", background="#f0f0f0", font=("Helvetica", 12))
+        self.styler.configure("TButton", background="#f0f0f0", font=("Helvetica", 12))
 
     # ==== MÉTODOS QUE DEFINEM A PARTE VISUAL ====
     def setup_gui(self):
@@ -50,7 +54,7 @@ class View(tk.Tk):
         self.maincanvas.pack(fill="both", expand=True, padx=5, pady=5)
         self.maincanvas.config(takefocus=1)
 
-        self.scale = 10
+        self.scale = 1
         self.rounder = 1
 
         self.last_point = None
@@ -59,49 +63,98 @@ class View(tk.Tk):
 
         self._bind_canvas_events()
 
-        
-    def _bind_canvas_events(self):
-        self.maincanvas.bind("<Button-1>", self._Button1_clicked)
-        self.maincanvas.bind("<Motion>", self._mouse_motion)
-        for i in ("<Escape>", "<Button-3>", "<space>"):
-            self.maincanvas.bind(i, self._esc_pressed)
-
-        self.maincanvas.bind("<F8>", self._f8_pressed)
-
     def input_gui(self):
-        # title
+        # titulo
         ttk.Label(
             self.rightframe, text="Titulo", font=("Helvetica", 20)
         ).pack(pady=10)
 
-        ttk.Separator(self.rightframe, orient=tk.HORIZONTAL).pack(fill="x")
+        # coordenadas
+        ttk.Separator(self.rightframe, orient=tk.HORIZONTAL).pack(fill="x", pady=5)
 
-        line1 = ttk.Frame(self.rightframe)
-        line1.pack(side="top", padx=5, pady=5, fill="x")
+        coord_frame = ttk.Frame(self.rightframe)
+        coord_frame.pack(fill="x", pady=5, padx=5)
 
-        line2 = ttk.Frame(self.rightframe)
-        line2.pack(side="top", padx=5, pady=5, fill="x")
+        # Entrada para X
+        ttk.Label(coord_frame, text="X:").pack(side="left")
+        self.x_stringvar = tk.StringVar(value="0")
+        ttk.Entry(coord_frame, textvariable=self.x_stringvar, width=8).pack(side="left", padx=(0, 10))
+
+        # Entrada para Y
+        ttk.Label(coord_frame, text="Y:").pack(side="left")
+        self.y_stringvar = tk.StringVar(value="0")
+        ttk.Entry(coord_frame, textvariable=self.y_stringvar, width=8).pack(side="left", padx=(0, 10))
+
+        ttk.Button(self.rightframe, text="+Coordenada",command=self.controller.add_point_button).pack(pady=5, fill="x")
+
+        # Escala
+        ttk.Separator(self.rightframe, orient=tk.HORIZONTAL).pack(fill="x", pady=5)
+
+        self.scale_var = tk.IntVar(value=50)
+        ttk.Label(self.rightframe, text="Definir Escala").pack(pady=5)
+        ttk.Scale(self.rightframe, from_=0, to=100, variable=self.scale_var, command=self.update_scale).pack()
+
+        # calcular
+        ttk.Separator(self.rightframe, orient=tk.HORIZONTAL).pack(fill="x", pady=5)
+
+        ttk.Button(self.rightframe, text="Calcular!",command=self.controller.calculate_area).pack(pady=5, fill="x")
+
+        self.area_label = ttk.Label(self.rightframe)
+        self.area_label.pack(pady=5)
         
-        self.coord_strgvar = tk.StringVar(value="x;y")
 
-        ttk.Label(line1, text="Nova Coordenada").pack(side="left")
-        ttk.Entry(line2, textvariable=self.coord_strgvar, width=6, font=("Helvetica", 16)).pack(side="left", padx=5)
+    # === COMANDOS DOS BOTÕES ===
+    def update_scale(self, event):
+        min_scale, max_scale = 0.001, 1000
 
+        def map_value(x):
+            normalized = x / 100
+            return min_scale * ((max_scale / min_scale) ** normalized)
+
+        scale_value = self.scale_var.get()
+
+        self.scale = map_value(scale_value)
+
+        self.update_screen()
+
+
+    # ==== MÉTODOS DE EVENTOS DO CANVAS ==== 
+    def _bind_canvas_events(self):
+        self.maincanvas.bind("<Button-1>", self._Button1_clicked)
+        self.maincanvas.bind("<Motion>", self._mouse_motion)
+        for i in ("<Escape>", "<Button-3>", "<space>"):
+            self.maincanvas.bind(i, self._polygon_done)
+
+        self.maincanvas.bind("<F8>", self._f8_pressed)
     
-    # ==== MÉTODOS DE EVENTOS DO CANVAS ====
-    def _Button1_clicked(self, event):
-        self.maincanvas.focus_set()
+    def add_new_point(self, point, is_canvas = True):
+        if not is_canvas:
+            point = self._convert_to_canvas_coords(point)
 
-        w, h = self.maincanvas.winfo_width(), self.maincanvas.winfo_height()
-        
         # checar se é o início de um polígono
         if self.last_point is None:
             
-            self.last_point = self._convert_from_canvas_coords((event.x, event.y))
+            self.last_point = self._convert_from_canvas_coords(point)
             self.polygon = [self.last_point]
         else:
-            self.last_point = self._handle_ortho_mode((event.x, event.y), convert_from_canvas=True)
+            self.last_point = self._handle_ortho_mode(point, convert_from_canvas=True)
+            if self.last_point == self.polygon[0]:
+                self._polygon_done(None)
+                
+                return
+
             self.polygon.append(self.last_point)
+        
+        
+        self.update_screen()
+        self.maincanvas.focus_set()
+
+    def _Button1_clicked(self, event):
+        self.maincanvas.focus_set()
+        point = (event.x, event.y)
+
+        self.add_new_point(point)
+         
 
     def _mouse_motion(self, event):
         temp_canvas_point = self._handle_ortho_mode((event.x, event.y), convert_from_canvas=False)
@@ -119,7 +172,8 @@ class View(tk.Tk):
         
         self.maincanvas.create_line(last_canvas_point, temp_canvas_point, fill="black", width=5)
 
-    def _esc_pressed(self, event):
+    def _polygon_done(self, event):
+        
         # close polygon
         self.polygon.append(self.polygon[0])
 
@@ -194,38 +248,6 @@ class View(tk.Tk):
 
 
     # ==== MÉTODOS DE DESENHO E ATUALIZAÇÃO ====
-    def _draw_axis(self):
-        canvas_w, canvas_h = self.maincanvas.winfo_width(), self.maincanvas.winfo_height()
-        # desenhar eixos
-        self.maincanvas.create_line((0, canvas_h/2), (canvas_w, canvas_h/2), width=1, fill="black")
-        self.maincanvas.create_line((canvas_w/2, 0), (canvas_w/2, canvas_h), width=1, fill="black")
-
-        # desenhar quebras de axis
-        epsilon_x, epsilon_y = canvas_w/100, canvas_h/100
-
-        min_x, max_y = self._convert_from_canvas_coords((0, 0))
-        max_x, min_y = self._convert_from_canvas_coords((canvas_w, canvas_h))
-
-    
-        def norm_range(i0, i1, k)->int:
-            i0 = int(i0 / k) * k
-            i1 = int(i1 / k) * k
-
-            return range(i0, i1, k)
-
-        for xi in norm_range(min_x, max_x, 5):
-            canvas_xi, y0 = self._convert_to_canvas_coords((xi, 0))
-            self.maincanvas.create_line((canvas_xi, y0 - epsilon_y), (canvas_xi, y0 + epsilon_y))
-
-        for yi in norm_range(min_y, max_y, 5):
-            x0, canvas_yi = self._convert_to_canvas_coords((0, yi))
-            self.maincanvas.create_line((x0 - epsilon_x, canvas_yi), (x0 + epsilon_x, canvas_yi))
-
-
-
-
-        
-
 
     def draw_canvas(self):
         # deletar desenhos anteriores
@@ -233,6 +255,12 @@ class View(tk.Tk):
         
         # obter tamanho do canvas
         canvas_w, canvas_h = self.maincanvas.winfo_width(), self.maincanvas.winfo_height()
+                
+        top_left = self._convert_from_canvas_coords((0, 0))
+        bottom_right = self._convert_from_canvas_coords((canvas_w, canvas_h))
+
+        largura = bottom_right[0] - top_left[0]
+        altura = top_left[1] - bottom_right[1] 
 
 
         if len(self.polygon) > 1:
@@ -242,9 +270,11 @@ class View(tk.Tk):
             if self.last_point is None: # o polígono está fechado 
                 self.maincanvas.create_polygon(*canvas_polygon, width=3, fill="red")
         
-        self._draw_axis()
+        # desenhar eixos
+        self.maincanvas.create_line((0, canvas_h/2), (canvas_w, canvas_h/2), width=1, fill="black")
+        self.maincanvas.create_line((canvas_w/2, 0), (canvas_w/2, canvas_h), width=1, fill="black")
 
-      
+        self.maincanvas.create_text((0 + canvas_w *.01,0 + canvas_h *.01), text=f"{largura}x{altura}", anchor="nw")
 
     def update_screen(self):
         self.draw_canvas()
@@ -263,6 +293,23 @@ class Controller(object):
 
     def set_polygon(self, new_polygon):
         self.model.polygon = new_polygon
+
+    def add_point_button(self):
+        x = self.view.x_stringvar.get()
+        y = self.view.y_stringvar.get()
+        try:
+            x = float(x)
+            y = float(y)
+        except:
+            return
+
+        self.view.add_new_point((x, y), is_canvas=False)
+
+    def calculate_area(self):
+        if len(self.view.polygon) > 2:
+            area = self.model.calculate_area()
+
+            self.view.area_label.config(text=f"Área: {area}")
     
     def run(self):
         self.view.mainloop()

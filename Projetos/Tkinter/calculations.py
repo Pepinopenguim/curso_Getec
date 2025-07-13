@@ -1,7 +1,3 @@
-from scipy.spatial import ConvexHull
-
-def ConvexHullList(plist):
-    return [plist[i] for i in ConvexHull(plist).vertices]
 
 class Calculations:
     """Cálculo de qualidades de polígonos, com base numa lista de coordenadas de pontos que o compõe
@@ -9,8 +5,8 @@ class Calculations:
     Página 6.
     """
 
-    def __init__(self, List:list, round_value:int = 5, Convex_Hull_mode:bool = False, unit:str = None):
-        self.List = ConvexHullList(List) if Convex_Hull_mode else List
+    def __init__(self, List:list, round_value:int = 5, unit:str = None):
+        self.List = List
         self.round_value = round_value
         self.unit = unit
 
