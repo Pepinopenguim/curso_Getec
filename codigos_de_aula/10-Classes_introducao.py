@@ -144,6 +144,8 @@ class Caminhao(Veiculo):
         super().atualizacao()
         print(f"{self.tipo} possui {self.tamanho_da_carreta} metros de carreta")
 
+property
+
 # Testando a classe Caminhao
 meu_caminhao = Caminhao("Mercedez", "azul", 2015, tamanho_da_carreta=9)
 meu_caminhao.acelerar(20)

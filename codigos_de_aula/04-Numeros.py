@@ -1,7 +1,11 @@
 # %% [markdown]
+# ---
+
 # ## Trabalhando com Números no Python
 
 # %% [markdown]
+# ---
+
 # **Tipos numéricos básicos**
 # Inteiros (int) e operações aritméticas
 
@@ -13,6 +17,8 @@ print(f"Multiplicação: {i1 * i2}")
 print(f"Divisão: {i1 / i2}")
 
 # %% [markdown]
+# ---
+
 # **Operadores especiais**
 # Resto, divisão inteira e exponenciação
 
@@ -22,6 +28,8 @@ print(f"Divisão inteira: {234 // 3}")
 print(f"Exponenciação: {2**3}")
 
 # %% [markdown]
+# ---
+
 # **Ordem de operações**
 # Parenteses → Expoentes → Mult/Div → Add/Sub
 
@@ -29,6 +37,8 @@ print(f"Exponenciação: {2**3}")
 print(f"Exemplo: {2 + 3 * 5**2}")  # 2 + (3 * (5²))
 
 # %% [markdown]
+# ---
+
 # **Números decimais (float)**
 # Conversão e operações
 
@@ -37,6 +47,8 @@ f1, f2 = 3245252.9787549823, 2.0
 print(f"Convertido para int: {int(f1)}")
 
 # %% [markdown]
+# ---
+
 # **Números complexos**
 # Representação e operações
 
@@ -46,6 +58,8 @@ c2 = complex(10, -4)
 print(f"Número complexo: {c2}")
 
 # %% [markdown]
+# ---
+
 # **Sistemas numéricos**
 # Hexadecimal e binário
 
@@ -57,6 +71,8 @@ b1 = 0b101010101
 print(f"Binário de 203: {bin(203)}")
 
 # %% [markdown]
+# ---
+
 # **Verificação de tipos**
 # Usando type() e isinstance()
 
@@ -65,6 +81,8 @@ print(f"Tipo de b1: {type(b1)}")
 print(f"É complexo?: {isinstance(c1, complex)}")
 
 # %% [markdown]
+# ---
+
 # **Formatação de números**
 # Arredondamento e exibição
 
@@ -74,6 +92,8 @@ print(f"Arredondado: {num:.3f}")  # 3 casas decimais
 print(f"Round padrão: {round(num)}")
 
 # %% [markdown]
+# ---
+
 # **Bibliotecas úteis**
 # Funções matemáticas e aleatórias
 
