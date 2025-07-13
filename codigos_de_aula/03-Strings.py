@@ -1,7 +1,11 @@
 # %% [markdown]
+# ---
+
 # ## Trabalhando com Strings no Python
 
 # %% [markdown]
+# ---
+
 # **Strings básicas e f-strings**
 # Formas de declarar e formatar strings
 
@@ -14,6 +18,8 @@ frase = f"Nome: {nome}, Sobrenome: {sobrenome}"
 print(frase)
 
 # %% [markdown]
+# ---
+
 # **Operações com strings**
 # Concatenação e repetição
 
@@ -24,6 +30,8 @@ inicio, fim = "aba", "cate"
 print(inicio + fim)  # Concatenação
 
 # %% [markdown]
+# ---
+
 # **Strings multilinha**
 # Como quebrar strings em múltiplas linhas
 
@@ -35,6 +43,8 @@ texto = "Linha 1" + paragrafo + \
 print(texto)
 
 # %% [markdown]
+# ---
+
 # **Strings como arrays**
 # Acessando caracteres e slices
 
@@ -49,6 +59,8 @@ for letra in alfabeto:
     print(letra, end=" ")  # Imprime com espaço
 
 # %% [markdown]
+# ---
+
 # **Métodos úteis**
 # Operações comuns com strings
 
@@ -57,6 +69,8 @@ print(f"\nTamanho: {len(alfabeto)}")  # Length
 print("A" in "Abacate")  # Busca (case sensitive)
 
 # %% [markdown]
+# ---
+
 # **Exemplo prático**
 # Demonstração simples
 

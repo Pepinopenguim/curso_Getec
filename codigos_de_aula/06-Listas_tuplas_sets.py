@@ -56,12 +56,16 @@ print("Set original de letras:", letras)
 letra_qualquer = "e"
 print(f"\nA letra '{letra_qualquer}' está no set?", letra_qualquer in letras)
 
+# Aqui queremos remover todas as letras do set 'letras'
+# que não estão na string "kdjvfargiojjkçljçoearig" 
+
 print("\nRemovendo letras:")
 for letra in "kdjvfargiojjkçljçoearig":
-    if letra in letras:
+    if letra in letras: 
         letras.remove(letra)
         print(f"'{letra}' removida - Set atual:", letras)
     else:
         print(f"'{letra}' não encontrada")
 
 print("\nSet final:", letras)
+# %%
