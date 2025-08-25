@@ -234,8 +234,3 @@ class Calculations:
             ]
         except ZeroDivisionError:
             return [0] * 8
-
-if __name__ == "__main__":
-    c = Calculations([(0,0), (10,0), (10,10), (0,10)])
-
-    print(c.Report())
