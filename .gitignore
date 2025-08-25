@@ -1,2 +1,8 @@
-.env
+.*
 cola.py
+build
+dist
+*.spec
+# temp
+Scrapper
+Yt Downloader
