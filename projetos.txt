@@ -1,5 +1,1 @@
-MP3 downloader
-PDF handler
-App simples de tkinter
-OpenCV, reconhecimento de rostos
-Organizador de arquivos com shutil
+
